@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use App\Models\requestTicket;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
@@ -24,22 +25,59 @@ class DashboardController extends Controller
     }
 
     public function approved(){
-        return view('dashboard', [
-            'data' => requestTicket::where('status', 'Approved')->get()
-        ]);
+
+        $userRole = Auth::user()->role;
+        $userId = Auth::user()->id;
+
+        if ($userRole === 'Warehouse')
+        {
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Approved')->get()
+            ]);
+        }else{
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Approved')
+                                            ->where('account_id', $userId)
+                                            ->get()
+            ]);
+        }
     }
 
     
     public function pending(){
-        return view('dashboard', [
-            'data' => requestTicket::where('status', 'Pending')->get()
-        ]);
+        $userRole = Auth::user()->role;
+        $userId = Auth::user()->id;
+
+        if ($userRole === 'Warehouse')
+        {
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Pending')->get()
+            ]);
+        }else{
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Approved')
+                                            ->where('account_id', $userId)
+                                            ->get()
+            ]);
+        }
     }
 
     public function rejected(){
-        return view('dashboard', [
-            'data' => requestTicket::where('status', 'Rejected')->get()
-        ]);
+        $userRole = Auth::user()->role;
+        $userId = Auth::user()->id;
+
+        if ($userRole === 'Warehouse')
+        {
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Rejected')->get()
+            ]);
+        }else{
+            return view('dashboard', [
+                'data' => requestTicket::where('status', 'Rejected')
+                                            ->where('account_id', $userId)
+                                            ->get()
+            ]);
+        }
     }
 
 
